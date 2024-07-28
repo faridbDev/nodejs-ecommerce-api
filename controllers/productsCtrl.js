@@ -26,23 +26,28 @@ export const createProductCtrl = asyncHandler(async (req, res) => {
     throw new Error("Brand Not found, Please Create Brand Or Check Brand Name");
   }
 
-  let mimeType = '';
-  if (req.file.mimetype === 'image/png') {
-    mimeType = 'image/png';
-  } else if (req.file.mimetype === 'image.jpg') {
-    mimeType = 'image/jpg';
-  } else if (req.file.mimetype === 'image.jpeg') {
-    mimeType = 'image.jpeg';
+  let images = [];
+  for (let i = 0; i < req.files?.length; i++) {
+    let mimeType = '';
+    if (req.files[i].mimetype === 'image/png') {
+      mimeType = 'image/png';
+    } else if (req.file?.mimetype === 'image.jpg') {
+      mimeType = 'image/jpg';
+    } else if (req.file?.mimetype === 'image.jpeg') {
+      mimeType = 'image.jpeg';
+    }
+    // create product image
+    const image = {
+      data: fs.readFileSync(process.cwd() + '\\uploads\\products\\' + req.files[i].filename),
+      contentType: mimeType
+    };
+    console.log(`A${i}: `, image);
+    images.push(image);
   }
-  // create product image
-  const image = {
-    data: fs.readFileSync(process.cwd() + '\\uploads\\products\\' + req.file.filename),
-    contentType: mimeType
-  };
 
   // create the product
   const product = await Product.create({ name, description, brand, category, sizes, colors,
-  user: req.userAuthId, price, totalQty, images: image });
+  user: req.userAuthId, price, totalQty, images: images });
 
   // push the product into category and save
   categoryFound.products.push(product._id);

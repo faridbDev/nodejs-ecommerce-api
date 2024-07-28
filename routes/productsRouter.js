@@ -7,7 +7,7 @@ import productImageupload from '../config/productImageUpload.js';
 
 const productsRouter = express.Router();
 
-productsRouter.post('/', isLoggedIn, isAdmin, productImageupload.single('image'), createProductCtrl);
+productsRouter.post('/', isLoggedIn, isAdmin, productImageupload.array('image'), createProductCtrl);
 productsRouter.get('/', getProductsCtrl);
 productsRouter.get('/:id', getProductCtrl);
 productsRouter.put('/:id/update', isLoggedIn, isAdmin, updateProductCtrl);
